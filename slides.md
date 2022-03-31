@@ -1,6 +1,6 @@
 ---
 theme: seriph
-background: https://source.unsplash.com/collection/94734566/1920x1080
+# background: https://source.unsplash.com/collection/94734566/1920x1080
 class: text-center
 highlighter: shiki
 lineNumbers: false
@@ -12,328 +12,390 @@ info: |
 title: Welcome to Slidev
 ---
 
-# Welcome to Slidev
+<img src="https://pinia.vuejs.org/logo.svg" class="mx-auto w-20">
 
-Presentation slides for developers
+# Introduction to Pinia
 
-<div class="pt-12">
-  <span @click="$slidev.nav.next" class="px-2 py-1 rounded cursor-pointer" hover="bg-white bg-opacity-10">
-    Press Space for next page <carbon:arrow-right class="inline"/>
-  </span>
-</div>
-
-<div class="abs-br m-6 flex gap-2">
-  <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="text-xl icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon:edit />
-  </button>
-  <a href="https://github.com/slidevjs/slidev" target="_blank" alt="GitHub"
-    class="text-xl icon-btn opacity-50 !border-none !hover:text-white">
-    <carbon-logo-github />
-  </a>
-</div>
-
-<!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
--->
+Warsono &middot; Chapter Lead Frontend at GITS Indonesia
 
 ---
 
-# What is Slidev?
+# What is Pinia?
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+Pinia is a store library for Vue, it allows you to share a state across components/pages.
 
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - theme can be shared and used with npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embedding Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export into PDF, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - anything possible on a webpage
-
-<br>
-<br>
-
-Read more about [Why Slidev?](https://sli.dev/guide/why)
-
-<!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/guide/syntax#embedded-styles
--->
-
-<style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent; 
-  -moz-text-fill-color: transparent;
-}
-</style>
+- Pinia started as an experiment to redesign what a Store for Vue could look like with the Composition API around November 2019
+- Pinia works for both Vue 2 and Vue 3 and doesn't require you to use the composition API
+- The API is the same for both except for installation and SSR
 
 ---
 
-# Navigation
+# Why should I use Pinia?
 
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/navigation.html)
+Pinia is a store library for Vue, it allows you to share a state across components/pages.
 
-### Keyboard Shortcuts
-
-|                                                    |                             |
-| -------------------------------------------------- | --------------------------- |
-| <kbd>right</kbd> / <kbd>space</kbd>                | next animation or slide     |
-| <kbd>left</kbd> / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd>                                      | previous slide              |
-| <kbd>down</kbd>                                    | next slide                  |
-
-<!-- https://sli.dev/guide/animations.html#click-animations -->
-
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-/>
-
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
+- Devtools support
+  - A timeline to track actions, mutations
+  - Stores appear in components where they are used
+  - Time travel and easier debugging
+- Hot module replacement
+  - Modify your stores without reloading your page
+  - Keep any existing state while developing
+- Plugins: extend Pinia features with plugins
+- Proper TypeScript support or autocompletion for JS users
+- Server Side Rendering Support
 
 ---
 
-layout: image-right
-image: https://source.unsplash.com/collection/94734566/1920x1080
+# Store Concepts
+
+- A Store (like Pinia) is an entity holding state and business logic that isn't bound to your Component tree.
+- In other words, it hosts global state.
+- It has three concepts, the `state`, `getters` and `actions`
+- it's safe to assume these concepts are the equivalent of `data`, `computed` and `methods` in components.
 
 ---
 
-# Code
+# When should I use a Store
 
-Use code snippets and get the highlighting directly![^1]
+- A store should contain data that can be accessed throughout your application
+- This includes data that is used in many places:
+  - e.g. User information that is displayed in the navbar
+- You should avoid including in the store local data that could be hosted in a component instead
+  - e.g. the visibility of an element local to a page.
+- Not all applications need access to a global state
 
-```ts {all|2|1-6|9|all}
-interface User {
-  id: number;
-  firstName: string;
-  lastName: string;
-  role: string;
-}
+---
 
-function updateUser(id: number, update: User) {
-  const user = getUser(id);
-  const newUser = { ...user, ...update };
-  saveUser(id, newUser);
-}
+# Installation
+
+Project Scafollding
+
+```bash
+npm init vue@latest
 ```
 
-<arrow v-click="3" x1="400" y1="420" x2="230" y2="330" color="#564" width="3" arrowSize="1" />
+```bash {5}
+✔ Project name: … <your-project-name>
+✔ Add TypeScript? … No / Yes
+✔ Add JSX Support? … No / Yes
+✔ Add Vue Router for Single Page Application development? … No / Yes
+✔ Add Pinia for state management? … No / Yes
+✔ Add Vitest for Unit testing? … No / Yes
+✔ Add Cypress for both Unit and End-to-End testing? … No / Yes
+✔ Add ESLint for code quality? … No / Yes
+✔ Add Prettier for code formating? … No / Yes
 
-[^1]: [Learn More](https://sli.dev/guide/syntax.html#line-highlighting)
-
-<style>
-.footnotes-sep {
-  @apply mt-20 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
-
----
-
-# Components
-
-<div grid="~ cols-2 gap-4">
-<div>
-
-You can use Vue components directly inside your slides.
-
-We have provided a few built-in components like `<Tweet/>` and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
-
-```html
-<Counter :count="10" />
+Scaffolding project in ./<your-project-name>...
+Done.
 ```
 
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
+---
 
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
+# Adding to existing project
 
-</div>
-<div>
+Step-by-step installation
 
-```html
-<Tweet id="1390115482657726468" />
+Install `pinia` with your favorite package manager:
+
+```bash
+yarn add pinia
+# or with npm
+npm install pinia
 ```
 
-<Tweet id="1390115482657726468" scale="0.65" />
+Create a pinia (the root store) and pass it to the app:
 
-</div>
-</div>
+```js
+// main.js
+import { createPinia } from 'pinia';
 
----
-
-## class: px-20
-
-# Themes
-
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
-
-<div grid="~ cols-2 gap-2" m="-t-2">
-
-```yaml
----
-theme: default
----
+app.use(createPinia());
 ```
 
-```yaml
 ---
-theme: seriph
----
+
+# Defining a store
+
+```ts {all|2|4|5-7|8-9|10-12|13-17}
+// stores/counter.js
+import { defineStore } from 'pinia';
+
+export const useCounterStore = defineStore('counter', {
+  state: () => {
+    return { count: 0 };
+  },
+  // could also be defined as
+  // state: () => ({ count: 0 })
+  getters: {
+    doubleCount: (state) => state.counter * 2,
+  },
+  actions: {
+    increment() {
+      this.count++;
+    },
+  },
+});
 ```
 
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true">
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true">
-
-</div>
-
-Read more about [How to use a theme](https://sli.dev/themes/use.html) and
-check out the [Awesome Themes Gallery](https://sli.dev/themes/gallery.html).
-
 ---
 
-## preload: false
+# Using the store
 
-# Animations
+```vue {all|2|6|9|11|13}
+<script>
+import { useCounterStore } from '@/stores/counter';
 
-Animations are powered by [@vueuse/motion](https://motion.vueuse.org/).
+export default {
+  setup() {
+    const counter = useCounterStore();
 
-```html
-<div v-motion :initial="{ x: -80 }" :enter="{ x: 0 }">Slidev</div>
-```
+    // mutation
+    counter.count++;
+    // with autocompletion ✨
+    counter.$patch({ count: counter.count + 1 });
+    // or using an action instead
+    counter.increment();
 
-<div class="w-60 relative mt-6">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-square.png"
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-circle.png"
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute top-0 left-0 right-0 bottom-0"
-      src="https://sli.dev/logo-triangle.png"
-    />
-  </div>
-
-  <div 
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
-</div>
-
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
-  }
-}
+    return {
+      store,
+    };
+  },
+};
 </script>
-
-<div
-  v-motion
-  :initial="{ x:35, y: 40, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
-
-[Learn More](https://sli.dev/guide/animations.html#motion)
-
-</div>
-
----
-
-# LaTeX
-
-LaTeX is supported out-of-box powered by [KaTeX](https://katex.org/).
-
-<br>
-
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-
-$$
-\begin{array}{c}
-
-\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} &
-= \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} & = 4 \pi \rho \\
-
-\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t} & = \vec{\mathbf{0}} \\
-
-\nabla \cdot \vec{\mathbf{B}} & = 0
-
-\end{array}
-$$
-
-<br>
-
-[Learn more](https://sli.dev/guide/syntax#latex)
-
----
-
-# Diagrams
-
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
-
-<div class="grid grid-cols-2 gap-10 pt-4 -mb-6">
-
-```mermaid {scale: 0.9}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
 ```
 
-```mermaid {theme: 'neutral', scale: 0.8}
-graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
+---
+
+# Destructuring Store
+
+Destructuring store will breaks reactivity
+
+```ts
+export default defineComponent({
+  setup() {
+    const store = useCounterStore();
+    // ❌ This won't work because it breaks reactivity
+    // it's the same as destructuring from `props`
+    const { name, doubleCount } = store;
+
+    name; // "eduardo"
+    doubleCount; // 2
+
+    return {
+      // will always be "eduardo"
+      name,
+      // will always be 2
+      doubleCount,
+      // this one will be reactive
+      doubleValue: computed(() => store.doubleCount),
+    };
+  },
+});
 ```
 
-</div>
+---
 
-[Learn More](https://sli.dev/guide/syntax.html#diagrams)
+# Destructuring Store
+
+Use `storeToRefs` to destructure store
+
+```ts
+import { storeToRefs } from 'pinia'
+
+export default defineComponent({
+  setup() {
+    const store = useStore()
+    // `name` and `doubleCount` are reactive refs
+    // This will also create refs for properties added by plugins
+    // but skip any action or non reactive (non ref/reactive) property
+    const { name, doubleCount } = storeToRefs(store)
+    // the increment action can be just extracted
+    const { increment } = store
+
+    return {
+      name,
+      doubleCount
+      increment,
+    }
+  },
+})
+```
 
 ---
 
-layout: center
-class: text-center
+# Core Concepts
+
+- State
+- Getters
+- Actions
 
 ---
 
-# Learn More
+# State
 
-[Documentations](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/showcases.html)
+The state is, most of the time, the central part of your store
+
+```ts
+import { defineStore } from 'pinia';
+
+const useStore = defineStore('storeId', {
+  // arrow function recommended for full type inference
+  state: () => {
+    return {
+      // all these properties will have their type inferred automatically
+      counter: 0,
+      name: 'Eduardo',
+      isAdmin: true,
+    };
+  },
+});
+```
+
+---
+
+# Accessing & Resetting The State
+
+By default, you can directly read and write to the state by accessing it through the `store` instance:
+
+```ts
+const store = useStore();
+
+store.counter++;
+```
+
+<br>
+<br>
+
+### Resetting the state
+
+You can reset the state to its initial value by calling the `$reset()` method on the store:
+
+```ts
+const store = useStore();
+
+store.$reset();
+```
+
+---
+
+# Usage with `setup()`
+
+```ts
+import { useCounterStore } from '../stores/counterStore';
+
+export default {
+  setup() {
+    const counterStore = useCounterStore();
+
+    return { counterStore };
+  },
+  computed: {
+    tripleCounter() {
+      return this.counterStore.counter * 3;
+    },
+  },
+};
+```
+
+---
+
+# Usage without `setup()`
+
+```ts
+import { mapState } from 'pinia'
+import { useCounterStore } from '../stores/counterStore'
+
+export default {
+  computed: {
+    // gives access to this.counter inside the component
+    // same as reading from store.counter
+    ...mapState(useCounterStore, ['counter'])
+    // same as above but registers it as this.myOwnName
+    ...mapState(useCounterStore, {
+      myOwnName: 'counter',
+      // you can also write a function that gets access to the store
+      double: store => store.counter * 2,
+      // it can have access to `this` but it won't be typed correctly...
+      magicValue(store) {
+        return store.someGetter + this.counter + this.double
+      },
+    }),
+  },
+}
+```
+
+---
+
+# Modifiable state
+
+```ts
+import { mapWritableState } from 'pinia'
+import { useCounterStore } from '../stores/counterStore'
+
+export default {
+  computed: {
+    // gives access to this.counter inside the component and allows setting it
+    // this.counter++
+    // same as reading from store.counter
+    ...mapWritableState(useCounterStore, ['counter'])
+    // same as above but registers it as this.myOwnName
+    ...mapWritableState(useCounterStore, {
+      myOwnName: 'counter',
+    }),
+  },
+}
+
+```
+
+---
+
+# Mutating the state
+
+```ts
+store.$patch({
+  counter: store.counter + 1,
+  name: 'Abalam',
+});
+```
+
+---
+
+# Defining a Store with Composition API
+
+```js
+import { ref } from 'vue';
+
+export const useCounterStore = defineStore('counter', () => {
+  const count = ref(0);
+
+  function increment() {
+    count.value++;
+  }
+
+  return { count, increment };
+});
+```
+
+---
+
+# Vuex-Style Helpers
+
+Pinia also support a similar set of map helpers like Vuex: `mapStores()`, `mapState()`, or `mapActions()`
+
+```js
+import {useCounterStore} from '@/store/counter';
+
+export default {
+  computed: {
+    // gives access to this.counterStore
+    ...mapStores(useCounterStore)
+    // gives read access to this.count and this.double
+    ...mapState(useCounterStore, ['count', 'double']),
+  },
+  methods: {
+    // gives access to this.increment()
+    ...mapActions(useCounterStore, ['increment']),
+  },
+}
+```
