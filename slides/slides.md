@@ -399,3 +399,365 @@ export default {
   },
 }
 ```
+
+---
+
+# Getters
+
+Getters are exactly the equivalent of **computed values** for the state of a Store
+
+```ts
+export const useStore = defineStore('main', {
+  state: () => ({
+    counter: 0,
+  }),
+  getters: {
+    doubleCount: (state) => state.counter * 2,
+    // the return type **must** be explicitly set
+    doublePlusOne(): number {
+      // autocompletion and typings for the whole store ✨
+      return this.doubleCount + 1;
+    },
+  },
+});
+```
+
+---
+
+# Passing arguments to getters
+
+```ts
+export const useStore = defineStore('main', {
+  getters: {
+    getUserById: (state) => {
+      return (userId) => state.users.find((user) => user.id === userId);
+    },
+  },
+});
+```
+
+and use in component:
+
+```vue
+<script>
+export default {
+  setup() {
+    const store = useStore();
+
+    return { getUserById: store.getUserById };
+  },
+};
+</script>
+<template>
+  <p>User 2: {{ getUserById(2) }}</p>
+</template>
+```
+
+---
+
+# Getters are not cached anymore
+
+Note that when doing this, getters are not cached anymore, they are simply functions that you invoke.
+
+```ts
+export const useStore = defineStore('main', {
+  getters: {
+    getActiveUserById(state) {
+      const activeUsers = state.users.filter((user) => user.active);
+      return (userId) => activeUsers.find((user) => user.id === userId);
+    },
+  },
+});
+```
+
+---
+
+# Accessing other stores getters
+
+```ts
+import { useOtherStore } from './other-store';
+
+export const useStore = defineStore('main', {
+  state: () => ({
+    // ...
+  }),
+  getters: {
+    otherGetter(state) {
+      const otherStore = useOtherStore();
+      return state.localData + otherStore.data;
+    },
+  },
+});
+```
+
+---
+
+# Usage with `setup()`
+
+```ts
+export default {
+  setup() {
+    const store = useStore();
+
+    store.counter = 3;
+    store.doubleCount; // 6
+  },
+};
+```
+
+---
+
+# Usage with the Options API and with `setup()`
+
+```ts
+import { useCounterStore } from '../stores/counterStore';
+
+export default {
+  setup() {
+    const counterStore = useCounterStore();
+
+    return { counterStore };
+  },
+  computed: {
+    quadrupleCounter() {
+      return counterStore.doubleCounter * 2;
+    },
+  },
+};
+```
+
+---
+
+# Without `setup()`
+
+```ts
+import { mapState } from 'pinia'
+import { useCounterStore } from '../stores/counterStore'
+
+export default {
+  computed: {
+    // gives access to this.doubleCounter inside the component
+    // same as reading from store.doubleCounter
+    ...mapState(useCounterStore, ['doubleCount'])
+    // same as above but registers it as this.myOwnName
+    ...mapState(useCounterStore, {
+      myOwnName: 'doubleCounter',
+      // you can also write a function that gets access to the store
+      double: store => store.doubleCount,
+    }),
+  },
+}
+```
+
+---
+
+# Actions
+
+Actions are the equivalent of `methods` in components
+
+```ts
+export const useStore = defineStore('main', {
+  state: () => ({
+    counter: 0,
+  }),
+  actions: {
+    increment() {
+      this.counter++;
+    },
+    randomizeCounter() {
+      this.counter = Math.round(100 * Math.random());
+    },
+  },
+});
+```
+
+---
+
+# Fetching API inside Actions
+
+`Actions` can be asynchronous, you can `await` inside of them any API call or even other actions!
+
+```ts
+import { mande } from 'mande';
+
+const api = mande('/api/users');
+
+export const useUsers = defineStore('users', {
+  state: () => ({
+    userData: null,
+  }),
+  actions: {
+    async registerUser(login, password) {
+      try {
+        this.userData = await api.post({ login, password });
+        showTooltip(`Welcome back ${this.userData.name}!`);
+      } catch (error) {
+        showTooltip(error);
+        // let the form component display the error
+        return error;
+      }
+    },
+  },
+});
+```
+
+---
+
+# Calling Actions
+
+You are also completely free to set whatever arguments you want and return anything.
+
+```ts
+export default defineComponent({
+  setup() {
+    const main = useMainStore();
+    // call the action as a method of the store
+    main.randomizeCounter();
+
+    const user = useUsers();
+    user.registerUser('user', 'password');
+
+    return {};
+  },
+});
+```
+
+---
+
+# Accessing other stores actions
+
+To use another store, you can directly _use it_ inside of the _action_:
+
+```ts
+import { useAuthStore } from './auth-store';
+
+export const useSettingsStore = defineStore('settings', {
+  state: () => ({
+    preferences: null,
+    // ...
+  }),
+  actions: {
+    async fetchUserPreferences() {
+      const auth = useAuthStore();
+      if (auth.isAuthenticated) {
+        this.preferences = await fetchPreferences();
+      } else {
+        throw new Error('User must be authenticated');
+      }
+    },
+  },
+});
+```
+
+---
+
+# Usage with `setup()`
+
+You can directly call any action as a method of the store:
+
+```ts
+export default {
+  setup() {
+    const store = useStore();
+
+    store.randomizeCounter();
+  },
+};
+```
+
+---
+
+# Usage with the Options API: with `setup()`
+
+```ts
+import { useCounterStore } from '../stores/counterStore';
+
+export default {
+  setup() {
+    const counterStore = useCounterStore();
+
+    return { counterStore };
+  },
+  methods: {
+    incrementAndPrint() {
+      this.counterStore.increment();
+      console.log('New Count:', this.counterStore.count);
+    },
+  },
+};
+```
+
+---
+
+# without `setup()`
+
+```ts
+import { mapActions } from 'pinia'
+import { useCounterStore } from '../stores/counterStore'
+
+export default {
+  methods: {
+    // gives access to this.increment() inside the component
+    // same as calling from store.increment()
+    ...mapActions(useCounterStore, ['increment'])
+    // same as above but registers it as this.myOwnName()
+    ...mapActions(useCounterStore, { myOwnName: 'doubleCounter' }),
+  },
+}
+```
+
+---
+
+# Subscribing to actions
+
+```ts
+const unsubscribe = someStore.$onAction(
+  ({
+    name, // name of the action
+    store, // store instance, same as `someStore`
+    args, // array of parameters passed to the action
+    after, // hook after the action returns or resolves
+    onError, // hook if the action throws or rejects
+  }) => {
+    // a shared variable for this specific action call
+    const startTime = Date.now();
+    // this will trigger before an action on `store` is executed
+    console.log(`Start "${name}" with params [${args.join(', ')}].`);
+
+    // this will trigger if the action succeeds and after it has fully run.
+    // it waits for any returned promised
+    after((result) => {
+      console.log(
+        `Finished "${name}" after ${
+          Date.now() - startTime
+        }ms.\nResult: ${result}.`
+      );
+    });
+
+    // this will trigger if the action throws or returns a promise that rejects
+    onError((error) => {
+      console.warn(
+        `Failed "${name}" after ${Date.now() - startTime}ms.\nError: ${error}.`
+      );
+    });
+  }
+);
+
+// manually remove the listener
+unsubscribe()``;
+```
+
+---
+
+# Summary
+
+- Pinia is a store library for Vue, it allows you to share a state across components/pages
+- Use store when data need to be accessed throughout your application or shared across components
+- Store has three concepts:
+  - `state` -> `data`
+  - `getters` -> `computed`
+  - `actions` -> `methods`
+
+---
+
+# Demo
