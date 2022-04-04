@@ -8,6 +8,7 @@ const counter = useCounterStore();
   <main>
     <h1>Count: {{ counter.counter }}</h1>
 
+    <button type="button" @click="counter.decrement">Decrement</button>
     <button type="button" @click="counter.increment">Increment</button>
   </main>
 </template>
