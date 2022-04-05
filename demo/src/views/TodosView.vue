@@ -18,7 +18,10 @@ const { todos, newTodo } = storeToRefs(todo);
 
     <ul>
       <li v-for="(todo, index) in todos" :key="index">
-        {{ todo.title }}
+        <label>
+          <input type="checkbox" v-model="todo.completed" />
+          {{ todo.title }}
+        </label>
       </li>
     </ul>
   </main>
