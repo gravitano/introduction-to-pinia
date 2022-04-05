@@ -1,8 +1,18 @@
 import { defineStore } from 'pinia';
 
+type TodoItem = {
+  title: string;
+  completed: boolean;
+};
+
+type TodoState = {
+  todos: TodoItem[];
+  newTodo: string;
+};
+
 export const useTodoStore = defineStore({
   id: 'todos',
-  state: () => ({
+  state: (): TodoState => ({
     todos: [],
     newTodo: '',
   }),
@@ -13,6 +23,7 @@ export const useTodoStore = defineStore({
     addTodo() {
       this.todos.push({
         title: this.newTodo,
+        completed: false,
       });
       this.newTodo = '';
     },

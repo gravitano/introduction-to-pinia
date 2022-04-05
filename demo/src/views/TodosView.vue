@@ -4,7 +4,9 @@ import { storeToRefs } from 'pinia';
 
 const todo = useTodoStore();
 
-const { todos, newTodo, addTodo } = storeToRefs(todo);
+const { addTodo } = todo;
+
+const { todos, newTodo } = storeToRefs(todo);
 </script>
 
 <template>
