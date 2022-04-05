@@ -14,13 +14,13 @@ const logout = () => {
 </script>
 
 <template>
-  <div>
+  <div class="container mt-4">
     <h1>Profile</h1>
 
-    <h2>Name: {{ user?.name }}</h2>
-    <h2>Email: {{ user?.email }}</h2>
+    <div>Name: {{ user?.name }}</div>
+    <div>Email: {{ user?.email }}</div>
 
-    <button @click="logout">Logout</button>
+    <button class="mt-4 btn btn-danger" @click="logout">Logout</button>
   </div>
 </template>
 

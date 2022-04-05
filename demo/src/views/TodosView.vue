@@ -19,37 +19,64 @@ const todoList = computed(() => {
 </script>
 
 <template>
-  <main>
+  <main class="container mt-4">
     <h1>Todo List</h1>
 
-    <input type="text" name="newTodo" v-model="newTodo" />
-    <button type="button" @click="addTodo">Add</button>
-
-    <div class="filter">
-      Filter:
-      <button :class="{ active: filter === 'all' }" @click="filter = 'all'">
-        All
-      </button>
-      <button
-        :class="{ active: filter === 'active' }"
-        @click="filter = 'active'"
-      >
-        Active
-      </button>
-      <button
-        :class="{ active: filter === 'completed' }"
-        @click="filter = 'completed'"
-      >
-        Done
+    <div class="d-flex mb-3">
+      <input
+        class="form-control"
+        placeholder="Type..."
+        type="text"
+        name="newTodo"
+        v-model="newTodo"
+      />
+      <button class="btn btn-primary" type="button" @click="addTodo">
+        Add
       </button>
     </div>
 
-    <ul>
-      <li v-for="(todo, index) in todoList" :key="index">
-        <div>
+    <div class="nav nav-pills d-flex align-items-center mb-3">
+      <span class="me-3">Filter:</span>
+      <a
+        href="#"
+        class="nav-link"
+        :class="{ active: filter === 'all' }"
+        @click.prevent="filter = 'all'"
+      >
+        All
+      </a>
+      <a
+        href="#"
+        class="nav-link"
+        :class="{ active: filter === 'active' }"
+        @click.prevent="filter = 'active'"
+      >
+        Active
+      </a>
+      <a
+        href="#"
+        class="nav-link"
+        :class="{ active: filter === 'completed' }"
+        @click.prevent="filter = 'completed'"
+      >
+        Done
+      </a>
+    </div>
+
+    <ul class="list-group">
+      <li
+        v-for="(todo, index) in todoList"
+        :key="index"
+        class="list-group-item"
+      >
+        <div class="d-flex align-items-center">
           <input type="checkbox" v-model="todo.completed" />
-          <span :class="{ done: todo.completed }"> {{ todo.title }}</span>
-          <button @click="removeTodo(index)">&times;</button>
+          <span class="mx-2 flex-grow-1" :class="{ done: todo.completed }">
+            {{ todo.title }}</span
+          >
+          <button class="btn btn-danger" @click="removeTodo(index)">
+            Delete
+          </button>
         </div>
       </li>
     </ul>
