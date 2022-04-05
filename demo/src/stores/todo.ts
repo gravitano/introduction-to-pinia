@@ -28,7 +28,9 @@ export const useTodoStore = defineStore({
       this.newTodo = '';
     },
     removeTodo(index: number) {
-      this.todos.splice(index, 1);
+      if (confirm('Are you sure want to delete this todo?')) {
+        this.todos.splice(index, 1);
+      }
     },
   },
 });
