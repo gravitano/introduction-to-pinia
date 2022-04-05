@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 
 const todo = useTodoStore();
 
-const { addTodo } = todo;
+const { addTodo, removeTodo } = todo;
 
 const { todos, newTodo } = storeToRefs(todo);
 </script>
@@ -21,6 +21,7 @@ const { todos, newTodo } = storeToRefs(todo);
         <label>
           <input type="checkbox" v-model="todo.completed" />
           {{ todo.title }}
+          <button @click="removeTodo(index)">&times;</button>
         </label>
       </li>
     </ul>

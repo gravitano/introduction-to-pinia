@@ -27,5 +27,8 @@ export const useTodoStore = defineStore({
       });
       this.newTodo = '';
     },
+    removeTodo(index: number) {
+      this.todos.splice(index, 1);
+    },
   },
 });
