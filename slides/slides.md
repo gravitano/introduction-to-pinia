@@ -140,6 +140,24 @@ export const useCounterStore = defineStore('counter', {
 
 ---
 
+# Defining a Store with Composition API
+
+```js
+import { ref } from 'vue';
+
+export const useCounterStore = defineStore('counter', () => {
+  const count = ref(0);
+
+  function increment() {
+    count.value++;
+  }
+
+  return { count, increment };
+});
+```
+
+---
+
 # Using the store
 
 ```vue {all|2|6|9|11|13}
@@ -261,7 +279,11 @@ By default, you can directly read and write to the state by accessing it through
 ```ts
 const store = useStore();
 
+console.log(store.counter); // 0
+
 store.counter++;
+
+console.log(store.counter); // 1
 ```
 
 <br>
@@ -361,47 +383,6 @@ store.$patch({
 
 ---
 
-# Defining a Store with Composition API
-
-```js
-import { ref } from 'vue';
-
-export const useCounterStore = defineStore('counter', () => {
-  const count = ref(0);
-
-  function increment() {
-    count.value++;
-  }
-
-  return { count, increment };
-});
-```
-
----
-
-# Vuex-Style Helpers
-
-Pinia also support a similar set of map helpers like Vuex: `mapStores()`, `mapState()`, or `mapActions()`
-
-```js
-import {useCounterStore} from '@/store/counter';
-
-export default {
-  computed: {
-    // gives access to this.counterStore
-    ...mapStores(useCounterStore)
-    // gives read access to this.count and this.double
-    ...mapState(useCounterStore, ['count', 'double']),
-  },
-  methods: {
-    // gives access to this.increment()
-    ...mapActions(useCounterStore, ['increment']),
-  },
-}
-```
-
----
-
 # Getters
 
 Getters are exactly the equivalent of **computed values** for the state of a Store
@@ -439,17 +420,11 @@ export const useStore = defineStore('main', {
 and use in component:
 
 ```vue
-<script>
-export default {
-  setup() {
-    const store = useStore();
-
-    return { getUserById: store.getUserById };
-  },
-};
+<script setup>
+const store = useStore();
 </script>
 <template>
-  <p>User 2: {{ getUserById(2) }}</p>
+  <p>User 2: {{ store.getUserById(2) }}</p>
 </template>
 ```
 
@@ -474,7 +449,7 @@ export const useStore = defineStore('main', {
 
 # Accessing other stores getters
 
-```ts
+```ts {all|1|9|10}
 import { useOtherStore } from './other-store';
 
 export const useStore = defineStore('main', {
@@ -494,7 +469,7 @@ export const useStore = defineStore('main', {
 
 # Usage with `setup()`
 
-```ts
+```ts {all|3|5|6}
 export default {
   setup() {
     const store = useStore();
@@ -509,7 +484,7 @@ export default {
 
 # Usage with the Options API and with `setup()`
 
-```ts
+```ts {all|5-7|10-12}
 import { useCounterStore } from '../stores/counterStore';
 
 export default {
@@ -577,7 +552,7 @@ export const useStore = defineStore('main', {
 
 `Actions` can be asynchronous, you can `await` inside of them any API call or even other actions!
 
-```ts
+```ts {all|7|10-20}
 import { mande } from 'mande';
 
 const api = mande('/api/users');
@@ -708,47 +683,6 @@ export default {
 
 ---
 
-# Subscribing to actions
-
-```ts
-const unsubscribe = someStore.$onAction(
-  ({
-    name, // name of the action
-    store, // store instance, same as `someStore`
-    args, // array of parameters passed to the action
-    after, // hook after the action returns or resolves
-    onError, // hook if the action throws or rejects
-  }) => {
-    // a shared variable for this specific action call
-    const startTime = Date.now();
-    // this will trigger before an action on `store` is executed
-    console.log(`Start "${name}" with params [${args.join(', ')}].`);
-
-    // this will trigger if the action succeeds and after it has fully run.
-    // it waits for any returned promised
-    after((result) => {
-      console.log(
-        `Finished "${name}" after ${
-          Date.now() - startTime
-        }ms.\nResult: ${result}.`
-      );
-    });
-
-    // this will trigger if the action throws or returns a promise that rejects
-    onError((error) => {
-      console.warn(
-        `Failed "${name}" after ${Date.now() - startTime}ms.\nError: ${error}.`
-      );
-    });
-  }
-);
-
-// manually remove the listener
-unsubscribe()``;
-```
-
----
-
 # Summary
 
 - Pinia is a store library for Vue, it allows you to share a state across components/pages
@@ -761,3 +695,5 @@ unsubscribe()``;
 ---
 
 # Demo
+
+https://github.com/gravitano/introduction-to-pinia
